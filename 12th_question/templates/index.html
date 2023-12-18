@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Real-Time Chat</title>
+</head>
+<body>
+    <div id="chat">
+        <ul id="messages"></ul>
+        <input id="message_input" autocomplete="off" /><button id="send_button">Send</button>
+    </div>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.0.1/socket.io.js"></script>
+    <script type="text/javascript">
+        var socket = io.connect('http://' + document.domain + ':' + location.port);
+
+        socket.on('connect', function() {
+            socket.emit('joined', {data: 'New user has joined.'});
+        });
+
+        socket.on('message', function(data) {
+            var ul = document.getElementById('messages');
+            var li = document.createElement('li');
+            li.appendChild(document.createTextNode(data.data));
+            ul.appendChild(li);
+        });
+
+        document.getElementById('send_button').onclick = function() {
+            var input = document.getElementById('message_input');
+            socket.emit('message', {data: input.value});
+            input.value = '';
+        };
+    </script>
+</body>
+</html>
